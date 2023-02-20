@@ -8,7 +8,7 @@
 /*	LIB	*/
 #include "Std_Types.h"
 #include <stdlib.h>
-#include "diag/trace.h"
+#include "print.h"
 
 /*	SELF	*/
 #include "Linked_List_Config.h"
@@ -39,11 +39,11 @@ void LinkedList_voidInit(
 }
 
 /******************************************************************************
- * List printing (uses trace_printf (for STM32 MCU's)):
+ * List printing
  *****************************************************************************/
 void LinkedList_voidPrintList(LinkedList_t* l)
 {
-	trace_printf("Printing linkedList @ %u:\n", (u32)l);
+	PRINTF("Printing linkedList @ %u:\n", (u32)l);
 
 	LinkedList_Link_t* current = l->first;
 

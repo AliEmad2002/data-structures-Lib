@@ -8,7 +8,7 @@
 /*	LIB	*/
 #include "Std_Types.h"
 #include <stdlib.h>
-#include "diag/trace.h"
+#include "print.h"
 
 /*	SELF	*/
 #include "Linked_List_Config.h"
@@ -87,10 +87,10 @@ void LinkedList_voidPrintLink(LinkedList_Link_t* link)
 	LINKED_LIST_PRINT_DATA(&link->data);
 
 	/*	print link's next	*/
-	trace_printf(", %u", (u32)link->next);
+	PRINTF(", %u", (u32)link->next);
 
 	/*	print link's address	*/
-	trace_printf(" @ %u\n", (u32)link);
+	PRINTF(" @ %u\n", (u32)link);
 }
 
 LinkedList_Link_t* LinkedList_ptrGetNextLinkCirc(
