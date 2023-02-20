@@ -282,7 +282,43 @@ b8 LinkedList_b8Search(LinkedList_t* l, LinkedList_Data_t* data, s32* i)
 	}
 }
 
+/******************************************************************************
+ * List sorting:
+ *****************************************************************************/
+void LinkedList_voidSortAscending(LinkedList_t* l)
+{
+	/**
+	 * Explaining used algorithm:
+	 *
+	 * 	-	Starting from first of the list, search for the link of minimum
+	 * 		data, and swap it with "first".
+	 *
+	 * 	-	Pass again on the list, this time form the 2nd link, searching for
+	 * 		link of minimum data, and swap them with each other.
+	 *
+	 * 	-	Loop, following the previously mentioned pattern, till the first
+	 * 		link in the pass is now the last link, then, sorting would've been
+	 * 		done.
+	 **/
 
+	/*
+	 * Since:	"firstInPass"		= "l->first"
+	 * Then:	"prevToFirstInPass"	= "NULL"
+	 * (Remember: "NULL" is used in referring to the link previous to "first")
+	 */
+	LinkedList_Link_t* prevToFirstInPass = NULL;
+
+	while(1)
+	{
+		prevToFirstInPass =
+			LinkedList_ptrSwapWithMinAfter(l, prevToFirstInPass);
+
+		if (prevToFirstInPass == NULL)
+			break;
+	}
+}
+
+void LinkedList_voidSortDescending(LinkedList_t* l);
 
 
 

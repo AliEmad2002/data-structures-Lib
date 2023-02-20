@@ -40,4 +40,30 @@ b8 LinkedList_b8GetLinkAt(LinkedList_t* l, s32 index, LinkedList_Link_t** linkPP
 /*	prints link info on console (uses trace_printf)	*/
 void LinkedList_voidPrintLink(LinkedList_Link_t* link);
 
+/*	returns pointer to the next link in list (circularly)	*/
+LinkedList_Link_t* LinkedList_ptrGetNextLinkCirc(
+	LinkedList_t* l, LinkedList_Link_t* current);
+
+/*
+ * This function:
+ * 	-	Starting from selected link (that is next to "prevToStart"), it searches
+ * 		for the link of minimum value.
+ *
+ * 	-	If found, it swaps both, minimum link and starting link.
+ *
+ * 	-	Returns pointer to the minimum link.
+ *
+ * 	-	Is Used in list sorting.
+ */
+LinkedList_Link_t* LinkedList_ptrSwapWithMinAfter(
+	LinkedList_t* l, LinkedList_Link_t* prevToStart);
+
+/*
+ * Swaps two links in list, given pointers to the links previous to these two.
+ *
+ * Remember: previous to "first" is taken to be "NULL"
+ */
+void LinkedList_voidSwapTwo(
+	LinkedList_t* l, LinkedList_Link_t* prev1, LinkedList_Link_t* prev2);
+
 #endif /* INCLUDE_DATA_STRUCTURES_LINKED_LIST_LINKED_LIST_PRIVATE_H_ */

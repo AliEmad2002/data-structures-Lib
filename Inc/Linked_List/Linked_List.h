@@ -175,8 +175,10 @@ b8 LinkedList_b8Search(LinkedList_t* l, LinkedList_Data_t* data, s32* i);			//	c
  * List sorting:
  *****************************************************************************/
 /*	sorts the linked list in an ascending order	*/
+void LinkedList_voidSortAscending(LinkedList_t* l);
 
 /*	sorts the linked list in a descending order	*/
+void LinkedList_voidSortDescending(LinkedList_t* l);
 
 #endif /* INC_LINKED_LIST_LINKED_LIST_H_ */
 

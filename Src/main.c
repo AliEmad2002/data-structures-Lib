@@ -5,9 +5,9 @@
 
 #include "Linked_List.h"
 
-#define INITIAL_NUMBER_OF_LINKS		0
+#define INITIAL_NUMBER_OF_LINKS		10
 #define MAX_DATA					1000
-#define RND_INIT					900
+#define RND_INIT					571468
 
 b8 is1Smaller	(const s32* n1Ptr, const s32* n2Ptr);
 b8 is1Larger	(const s32* n1Ptr, const s32* n2Ptr);
@@ -35,7 +35,7 @@ int main(void) {
 
 	LinkedList_voidPrintList(&l);
 
-	LinkedList_voidDeleteFirst(&l);
+	LinkedList_voidSortAscending(&l);
 
 	LinkedList_voidPrintList(&l);
 
