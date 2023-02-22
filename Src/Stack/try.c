@@ -1,4 +1,4 @@
-#define TRY_STACK		1
+#define TRY_STACK		0
 
 #if TRY_STACK
 

@@ -9,11 +9,16 @@
 #define INCLUDE_DATA_STRUCTURES_LINKED_LIST_LINKED_LIST_PRIVATE_H_
 
 
+/******************************************************************************
+ * Checking (against edge cases):
+ *****************************************************************************/
 /*	checks if a list is empty	*/
 #define LINKED_LIST_IS_LIST_EMPTY(listPtr)	\
 	(listPtr->first == NULL)
 
-
+/******************************************************************************
+ * Getting pointer to link of certain index:
+ *****************************************************************************/
 /*	returns pointer to the last link in list	*/
 LinkedList_Link_t* LinkedList_ptrGetLastLink(LinkedList_t* l);
 
@@ -37,12 +42,32 @@ b8 LinkedList_b8GetBeforeLastLink(
  */
 b8 LinkedList_b8GetLinkAt(LinkedList_t* l, s32 index, LinkedList_Link_t** linkPP);
 
-/*	prints link info on console (uses trace_printf)	*/
-void LinkedList_voidPrintLink(LinkedList_Link_t* link);
+/*
+ * Gets address of 'i'th link "next" variable.
+ * (That is an address of a pointer ==> pointer to pointer, And therefore to
+ * be passed by reference, linkPPP is used).
+ *
+ * 'index' could be -1. Therefore result is address of list's variable "first".
+ *
+ * returns "true" if 'index' is valid, "false" otherwise.
+ */
+b8 LinkedList_b8GetPointerToNextOf(
+	LinkedList_t* l, s32 index, LinkedList_Link_t*** linkPPP);
 
-/*	returns pointer to the next link in list (circularly)	*/
+/*	returns pointer to the link next to "current" (circularly)	*/
 LinkedList_Link_t* LinkedList_ptrGetNextLinkCirc(
 	LinkedList_t* l, LinkedList_Link_t* current);
+
+/******************************************************************************
+ * Swapping:
+ *****************************************************************************/
+/*
+ * Swaps two links in list, given pointers to the links previous to these two.
+ *
+ * Remember: previous to "first" is taken to be "NULL"
+ */
+void LinkedList_voidSwapTwo(
+	LinkedList_t* l, LinkedList_Link_t* prev1, LinkedList_Link_t* prev2);
 
 /*
  * This function:
@@ -59,11 +84,25 @@ LinkedList_Link_t* LinkedList_ptrSwapWithMinAfter(
 	LinkedList_t* l, LinkedList_Link_t* prevToStart);
 
 /*
- * Swaps two links in list, given pointers to the links previous to these two.
+ * This function:
+ * 	-	Starting from selected link (that is next to "prevToStart"), it searches
+ * 		for the link of maximum value.
  *
- * Remember: previous to "first" is taken to be "NULL"
+ * 	-	If found, it swaps both, maximum link and starting link.
+ *
+ * 	-	Returns pointer to the maximum link.
+ *
+ * 	-	Is Used in list sorting.
  */
-void LinkedList_voidSwapTwo(
-	LinkedList_t* l, LinkedList_Link_t* prev1, LinkedList_Link_t* prev2);
+LinkedList_Link_t* LinkedList_ptrSwapWithMaxAfter(
+	LinkedList_t* l, LinkedList_Link_t* prevToStart);
+
+/******************************************************************************
+ * Printing:
+ *****************************************************************************/
+/*	prints link info on console (uses trace_printf)	*/
+void LinkedList_voidPrintLink(LinkedList_Link_t* link);
+
+
 
 #endif /* INCLUDE_DATA_STRUCTURES_LINKED_LIST_LINKED_LIST_PRIVATE_H_ */

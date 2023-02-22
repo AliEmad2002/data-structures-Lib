@@ -47,8 +47,12 @@ void LinkedList_voidPrintList(LinkedList_t* l)
 
 	LinkedList_Link_t* current = l->first;
 
+	u32 i = 0;
+
 	while(current != NULL)
 	{
+		PRINTF("%u: ", i++);
+
 		LinkedList_voidPrintLink(current);
 
 		current = current->next;
@@ -183,7 +187,35 @@ void LinkedList_voidDeleteFirst(LinkedList_t* l)
 	free(firstTemp);
 }
 
-b8 LinkedList_b8DeleteFrom(LinkedList_t* l, s32 i);
+b8 LinkedList_b8DeleteFrom(LinkedList_t* l, s32 i)
+{
+	/**	next of link number 'i' - 1 = next of link number 'i'	**/
+
+	/*
+	 * Get address of: "i - 1"'s next:
+	 * (pointer to "list(i-1)->next")
+	 */
+	LinkedList_Link_t** nextToPrevToIPtrPtr;
+
+	b8 iIsValid = LinkedList_b8GetPointerToNextOf(l, i - 1, &nextToPrevToIPtrPtr);
+
+	/*	if 'i' does not exist	*/
+	if (!iIsValid)
+		return false;
+
+	/*	otherwise	*/
+	/*	Temporarily store list(i)->next	*/
+	LinkedList_Link_t* nextToIPtr = (*nextToPrevToIPtrPtr)->next;
+
+	/*	free link number 'i'	*/
+	free(*nextToPrevToIPtrPtr);
+
+	/*	assign the temporarily stored "list(i)->next" to "list(i-1)->next"	*/
+	*nextToPrevToIPtrPtr = nextToIPtr;
+
+	/*	deletion succeed	*/
+	return true;
+}
 
 /******************************************************************************
  * Data getting:
@@ -288,7 +320,7 @@ b8 LinkedList_b8Search(LinkedList_t* l, LinkedList_Data_t* data, s32* i)
 void LinkedList_voidSortAscending(LinkedList_t* l)
 {
 	/**
-	 * Explaining used algorithm:
+	 * Explaining used algorithm (based on selection sort):
 	 *
 	 * 	-	Starting from first of the list, search for the link of minimum
 	 * 		data, and swap it with "first".
@@ -318,7 +350,38 @@ void LinkedList_voidSortAscending(LinkedList_t* l)
 	}
 }
 
-void LinkedList_voidSortDescending(LinkedList_t* l);
+void LinkedList_voidSortDescending(LinkedList_t* l)
+{
+	/**
+	 * Explaining used algorithm (based on selection sort):
+	 *
+	 * 	-	Starting from first of the list, search for the link of maximum
+	 * 		data, and swap it with "first".
+	 *
+	 * 	-	Pass again on the list, this time form the 2nd link, searching for
+	 * 		link of maximum data, and swap them with each other.
+	 *
+	 * 	-	Loop, following the previously mentioned pattern, till the first
+	 * 		link in the pass is now the last link, then, sorting would've been
+	 * 		done.
+	 **/
+
+	/*
+	 * Since:	"firstInPass"		= "l->first"
+	 * Then:	"prevToFirstInPass"	= "NULL"
+	 * (Remember: "NULL" is used in referring to the link previous to "first")
+	 */
+	LinkedList_Link_t* prevToFirstInPass = NULL;
+
+	while(1)
+	{
+		prevToFirstInPass =
+			LinkedList_ptrSwapWithMaxAfter(l, prevToFirstInPass);
+
+		if (prevToFirstInPass == NULL)
+			break;
+	}
+}
 
 
 

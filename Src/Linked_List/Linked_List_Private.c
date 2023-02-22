@@ -81,6 +81,52 @@ b8 LinkedList_b8GetLinkAt(LinkedList_t* l, s32 index, LinkedList_Link_t** linkPP
 	}
 }
 
+/*
+ * Gets address of 'i'th link "next" variable.
+ * (That is an address of a pointer ==> pointer to pointer, And therefore to
+ * be passed by reference, linkPPP is used).
+ *
+ * 'index' could be -1. Therefore result is address of list's variable "first".
+ *
+ * returns "true" if 'index' is valid, "false" otherwise.
+ */
+b8 LinkedList_b8GetPointerToNextOf(
+	LinkedList_t* l, s32 index, LinkedList_Link_t*** linkPPP)
+{
+	/*
+	 * Pointer to the "next" variable of the 'i'th link.
+	 * Initially, point at list's first.
+	 */
+	LinkedList_Link_t** nextToIPtr = &(l->first);
+
+	/*	counter that is to be compared with 'index'	*/
+	s32 i = 0;
+
+	/*	while 'i'th link is not the end of the list	*/
+	while(*nextToIPtr != NULL)
+	{
+		/*	if 'i' reaches 'index' - 1, then 'i'th link is found	*/
+		if (i > index)
+		{
+			*linkPPP = nextToIPtr;
+			return true;
+		}
+
+		/*	otherwise, look at the next link	*/
+		else
+		{
+			nextToIPtr = (LinkedList_Link_t**)&((*nextToIPtr)->next);
+			i++;
+		}
+	}
+
+	/*
+	 * If the previous loop ends without a return, the 'index'th link was not
+	 * found.
+	 */
+	return false;
+}
+
 void LinkedList_voidPrintLink(LinkedList_Link_t* link)
 {
 	/*	print link's data	*/
@@ -156,6 +202,60 @@ LinkedList_Link_t* LinkedList_ptrSwapWithMinAfter(
 
 	/**	Return pointer to the search result's link 	**/
 	return min;
+}
+
+LinkedList_Link_t* LinkedList_ptrSwapWithMaxAfter(
+	LinkedList_t* l, LinkedList_Link_t* prevToStart)
+{
+	/**
+	 * Assume virtual pointers "current" and "max", which point to the current
+	 * link and maximum link (link of maximum data).
+	 *
+	 * As the nature of swapping requires pointers to previous link to each of
+	 * the two, "prevTo..." is used in addition.
+	 **/
+
+	/**	get pointer to the starting link.	**/
+	LinkedList_Link_t* start = LinkedList_ptrGetNextLinkCirc(l, prevToStart);
+
+	/*	if starting link is the terminator, return	*/
+	if (start == NULL)
+		return NULL;
+
+	/**	initially, maximum is the starting	**/
+	LinkedList_Link_t* max			= start;
+	LinkedList_Link_t* prevToMax	= prevToStart;
+
+	/**
+	 * "current" is pointer to the link being currently (in iteration) compared
+	 * with "max". This starts from the link next to starting link.
+	 **/
+	LinkedList_Link_t* current			= start->next;
+	LinkedList_Link_t* prevToCurrent	= start;
+
+	/**	search	**/
+
+	/*	while "current" is not the terminator	*/
+	while(current != NULL)
+	{
+		/*	if "current"'s data is smaller than that of "min"'s	*/
+		if (l->is1Larger(&(current->data), &(max->data)))
+		{
+			/*	update "min" with "current"	*/
+			max = current;
+			prevToMax = prevToCurrent;
+		}
+
+		/*	update "current" with "current->next"	*/
+		prevToCurrent = current;
+		current = current->next;
+	}
+
+	/**	Having now found "min", swap it with "start".	**/
+	LinkedList_voidSwapTwo(l, prevToMax, prevToStart);
+
+	/**	Return pointer to the search result's link 	**/
+	return max;
 }
 
 void LinkedList_voidSwapTwo(

@@ -4,8 +4,15 @@
  *  Created on: Feb 19, 2023
  *      Author: Ali Emad
  *
- * Goal of this structure is to give user flexibility of creating, manipulating
- * data lists, all dynamically.
+ * 	-	Goal of this structure is to give user flexibility of creating,
+ * 		manipulating data lists, all with dynamic allocation (Notice this may be
+ * 		forbidden in some embedded systems applications).
+ *
+ * 	-	User can create  multiple lists. But data type of the data they carry
+ * 		is the same (configured in config.h).
+ * 		(Data type checking is expensive in both time and memory, and this
+ * 		structure is mainly intended for ES. Hence, using fixed defined data type
+ * 		is better)
  */
 
 #ifndef INC_LINKED_LIST_LINKED_LIST_H_
@@ -86,7 +93,7 @@ void LinkedList_voidInit(
 	b8 (*is1Larger)		(const LinkedList_Data_t*, const LinkedList_Data_t*),
 	b8 (*areEqual)		(const LinkedList_Data_t*, const LinkedList_Data_t*),
 	void (*copyData) 	(LinkedList_Data_t*, const LinkedList_Data_t*)
-);
+);																					//	checked
 
 /******************************************************************************
  * List printing (uses trace_printf (for STM32 MCU's)):
@@ -127,7 +134,7 @@ void LinkedList_voidDeleteFirst(LinkedList_t* l);									//	checked
  * 	-	Returns "true" if 'i' is in range and data was deleted.
  * 	-	Returns "false" otherwise.
  */
-b8 LinkedList_b8DeleteFrom(LinkedList_t* l, s32 i);
+b8 LinkedList_b8DeleteFrom(LinkedList_t* l, s32 i);									// checked
 
 /******************************************************************************
  * Data getting:
@@ -175,10 +182,10 @@ b8 LinkedList_b8Search(LinkedList_t* l, LinkedList_Data_t* data, s32* i);			//	c
  * List sorting:
  *****************************************************************************/
 /*	sorts the linked list in an ascending order	*/
-void LinkedList_voidSortAscending(LinkedList_t* l);
+void LinkedList_voidSortAscending(LinkedList_t* l);									//	checked
 
 /*	sorts the linked list in a descending order	*/
-void LinkedList_voidSortDescending(LinkedList_t* l);
+void LinkedList_voidSortDescending(LinkedList_t* l);								//	checked
 
 #endif /* INC_LINKED_LIST_LINKED_LIST_H_ */
 

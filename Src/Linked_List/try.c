@@ -1,4 +1,4 @@
-#define TRY_LINKED_LIST		0
+#define TRY_LINKED_LIST		1
 
 #if TRY_LINKED_LIST
 
@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include "Linked_List.h"
+#include "Linked_List_Private.h"
 
 #define INITIAL_NUMBER_OF_LINKS		10
 #define MAX_DATA					1000
@@ -42,33 +43,7 @@ int main(void) {
 
 	LinkedList_voidPrintList(&l);
 
-	LinkedList_Link_t* second = l.first->next;
-
-	LinkedList_Link_t* third = second->next;
-
-	LinkedList_Link_t** current1NextPP = &(second->next);
-
-	LinkedList_Link_t** current2NextPP = &(third->next);
-
-	LinkedList_Link_t** prev1NextPP = &(l.first->next);
-
-	LinkedList_Link_t** prev2NextPP = &(second->next);
-
-	LinkedList_Link_t* temp = *prev1NextPP;
-
-	*prev1NextPP = *prev2NextPP;
-	*prev2NextPP = temp;
-
-	temp = *current1NextPP;
-
-	*current1NextPP = *current2NextPP;
-
-	*current2NextPP = temp;
-
-
-
-
-	//LinkedList_voidSortAscending(&l);
+	LinkedList_voidSortDescending(&l);
 
 	LinkedList_voidPrintList(&l);
 
