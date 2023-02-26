@@ -3,4 +3,4 @@
 
 # Added so far:
 * Linked list.
-* Stack.
+* Queue (FIFO).
