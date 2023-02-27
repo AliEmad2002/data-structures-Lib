@@ -1,4 +1,4 @@
-#define TRY_STACK		0
+#define TRY_STACK		1
 
 #if TRY_STACK
 
@@ -8,7 +8,6 @@
 #include "print.h"
 #include <time.h>
 
-#include "Stack_config.h"
 #include "Stack_interface.h"
 
 #define INITIAL_NUMBER_OF_DATA		5
@@ -17,11 +16,9 @@
 
 void copyData (s32** distPP, const s32* srcP);
 
-void freeData (s32** dataPP);
+void freeData (s32* dataPtr);
 
-void printData	(const s32* dataPtr);
-
-void print_stack(void);
+void printData	(s32* dataPtr);
 
 int main(void) {
 	PRINTF("Program started\n");
@@ -30,13 +27,16 @@ int main(void) {
 	srand(time(&tStart));
 
 	/*	init stack	*/
-	Stack_voidInit();
+	Stack_t stack;
+	Stack_voidInit(&stack);
 
 	/*	Push random data to stack	*/
 	for (u32 i = 0; i < INITIAL_NUMBER_OF_DATA; i++)
 	{
-		u32 data = rand() % MAX_DATA;
-		b8 pushSuccess = Stack_b8Push(&data);
+		s32 data = rand() % MAX_DATA;
+		b8 pushSuccess = Stack_b8Push(&stack, &data);
+
+		PRINTF("%u: Pushed: %d\n", i, data);
 
 		if (!pushSuccess)
 		{
@@ -46,7 +46,7 @@ int main(void) {
 	}
 
 	/*	Print stack	*/
-	print_stack();
+	Stack_voidPrint(&stack);
 
 	while(1);
 
@@ -59,30 +59,14 @@ void copyData (s32** distPP, const s32* srcP)
 	**distPP = *srcP;
 }
 
-void freeData (s32** dataPP)
+void freeData (s32* dataPtr)
 {
-	free(*dataPP);
+	free(dataPtr);
 }
 
-void printData	(const s32* dataPtr)
+void printData	(s32* dataPtr)
 {
 	PRINTF("%d", *dataPtr);
-}
-
-void print_stack(void)
-{
-	PRINTF("Printing stack:\n");
-
-	while(Stack_u16GetUsedLen() != 0)
-	{
-		s32* dataPtr;
-
-		Stack_ptrPop((void**)&dataPtr);
-
-		PRINTF("%d\n", *dataPtr);
-	}
-
-	PRINTF("===================\n");
 }
 
 #endif	/*	TRY_STACK	*/

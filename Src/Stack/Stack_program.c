@@ -6,118 +6,110 @@
  */
 
 /*	LIB	*/
-#include <stdlib.h>
 #include "Std_Types.h"
 #include "Bit_Math.h"
+#include "Print.h"
+
 /*	SELF	*/
-#include "Stack_config.h"
-#include "Stack_interface.h"
+#include "Stack_Config.h"
+#include "Stack_Interface.h"
 
-#if STACK_ENABLE == 1
+#if ENABLE_STACK
 
-/*	stack array (an array of pointers to pointers to stack's data-type)	*/
-static STACK_TYPE_PTR* stack;
-
-/*	Index of stack's current tail (after last object)	*/
-static u16 tailIndex = 0;
-
-/*	Index of stack's current head	(first object)	*/
-static u16 headIndex = 0;
-
-/*	count of the used space of stack	*/
-static u16 usedCount = 0;
-
-void Stack_voidInit(void)
+/*******************************************************************************
+ * Init:
+ ******************************************************************************/
+void Stack_voidInit(Stack_t* s)
 {
-	stack = (STACK_TYPE_PTR*)malloc(STACK_MAX_LEN * sizeof(STACK_TYPE_PTR));
+	s->tailIndex = 0;
 }
 
-void Stack_voidIncrementHeadIndex(void)
+void Stack_voidAssignAllocatedPointers(
+	Stack_t* s, Stack_Data_t* allocatedPtrArr[STACK_MAX_LEN])
 {
-	/*
-	 * if "head" is end of the array, circularly, next to it would be first of
-	 * the array.
-	 */
-	if (headIndex == STACK_MAX_LEN - 1)
-		headIndex = 0;
-
-	/*	otherwise, it is "tail" + 1	 */
-	else
-		headIndex++;
+	for (u16 i = 0; i < STACK_MAX_LEN; i++)
+	{
+		s->ptrArr[i] = allocatedPtrArr[i];
+	}
 }
 
-void Stack_voidIncrementTailIndex(void)
+/*******************************************************************************
+ * Info:
+ ******************************************************************************/
+u16 Stack_u16GetLenUsed(Stack_t* s)
 {
-	/*
-	 * if "tail" is end of the array, circularly, next to it would be first of
-	 * the array.
-	 */
-	if (tailIndex == STACK_MAX_LEN - 1)
-		tailIndex = 0;
-
-	/*	otherwise, it is "tail" + 1	 */
-	else
-		tailIndex++;
+	return s->tailIndex;
 }
 
-u16 Stack_u16GetUsedLen(void)
+/*******************************************************************************
+ * Push:
+ ******************************************************************************/
+b8 Stack_b8Push(Stack_t* s, Stack_Data_t* newDataPtr)
 {
-	return usedCount;
-}
-
-b8 Stack_b8IsStackFull(void)
-{
-	if (Stack_u16GetUsedLen() == STACK_MAX_LEN)
-		return true;
-
-	else
-		return false;
-}
-
-
-b8 Stack_b8Push(void* ptr)
-{
-	/*	check for full stack	*/
-	if (Stack_b8IsStackFull())
+	/*	check for full space	*/
+	if (s->tailIndex == STACK_MAX_LEN)
 		return false;
 
-	/*	if stack is not full 	*/
+	/*	copy new data at "tailIndex"	*/
+	Stack_Data_t** distPP = &(s->ptrArr[s->tailIndex]);
 
-	/*	copy argument data at new tail index	*/
-	STACK_COPY_FUNCTION(
-		(STACK_TYPE_PTR*)(&stack[tailIndex]), (STACK_TYPE_PTR)ptr);
+	STACK_COPY_ELEMENT(distPP, newDataPtr);
 
-	/*	increment "tail"	*/
-	Stack_voidIncrementTailIndex();
+	/*	increment "tailIndex"	*/
+	s->tailIndex++;
 
-	/*	increment data counter 	*/
-	usedCount++;
-
+	/*	push successful	*/
 	return true;
 }
 
-/*
- * takes pointer to pointer of the stack's data-type to the object
- * to be popped into, copies the first of stack to it,then deletes
- * the second.
- */
-void Stack_ptrPop(void** ptrPtr)
+/*******************************************************************************
+ * Pop:
+ ******************************************************************************/
+b8 Stack_b8Pop(Stack_t* s, Stack_Data_t** dataPP)
 {
-	/*	if stack is empty	*/
-	if (Stack_u16GetUsedLen() == 0)
-		return;
+	/*	check if stack is empty	*/
+	if (s->tailIndex == 0)
+		return false;
 
-	/*	copy head of the stack to the argument	*/
-	STACK_COPY_FUNCTION((STACK_TYPE_PTR*)ptrPtr, (STACK_TYPE_PTR)stack[headIndex]);
+	/*
+	 * copy end of the stack (at "tailIndex" - 1) to the argument pointer, using
+	 * the user defined copy function.
+	 */
+	Stack_Data_t* srcPtr = s->ptrArr[s->tailIndex - 1];
 
-	/*	free the head of the stack	*/
-	STACK_FREE_FUNCTION((STACK_TYPE_PTR*)&stack[headIndex]);
+	STACK_COPY_ELEMENT(dataPP, srcPtr);
 
-	/*	increment stack's head	*/
-	Stack_voidIncrementHeadIndex();
+	/*
+	 * delete (free) end of the stack using the user defined delete function.
+	 */
+	STACK_FREE_ELEMENT(srcPtr);
 
-	/*	decrement data counter 	*/
-	usedCount--;
+	/*	decrement "tailIndex"	*/
+	s->tailIndex--;
+
+	/*	pop successful	*/
+	return true;
 }
 
-#endif
+/*******************************************************************************
+ * Print:
+ ******************************************************************************/
+void Stack_voidPrint(Stack_t* s)
+{
+	PRINTF("Printing Stack object @ %u\n", (u32)s);
+
+	u16 i = 0;
+
+	Stack_Data_t* dPtr;
+
+	while(Stack_b8Pop(s, &dPtr))
+	{
+		PRINTF("%u: ", i++);
+		STACK_PRINT_ELEMENT(dPtr);
+		PRINTF("\n");
+	}
+
+	PRINTF("=========================\n");
+}
+
+#endif	/*	ENABLE_STACK	*/
